@@ -28,7 +28,7 @@ services:
       - key: CSRF_TRUSTED_ORIGINS
         value: https://your-netlify-site.netlify.app
       - key: FASTAPI_URL
-        sync: false
+        value: https://sheild-ai-service.onrender.com
       - key: TRACEABILITY_PROVIDER
         value: serpapi
       - key: TRACEABILITY_FALLBACK_TO_MOCK

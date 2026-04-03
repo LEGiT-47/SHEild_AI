@@ -86,7 +86,24 @@ CSRF_TRUSTED_ORIGINS = [
 ]
 MEDIA_ROOT = BASE_DIR / "media"
 MEDIA_URL = "/media/"
-FASTAPI_URL = os.getenv("FASTAPI_URL", "http://localhost:8001")
+
+
+def _resolve_fastapi_url() -> str:
+    # Prefer explicit runtime env vars first.
+    for key in ("FASTAPI_URL", "AI_SERVICE_URL"):
+        value = os.getenv(key, "").strip()
+        if value:
+            return value
+
+    # Local development should keep using localhost by default.
+    if DEBUG:
+        return "http://localhost:8001"
+
+    # Production-safe default for Render deployments.
+    return "https://sheild-ai-service.onrender.com"
+
+
+FASTAPI_URL = _resolve_fastapi_url()
 
 TRACEABILITY_PROVIDER = os.getenv("TRACEABILITY_PROVIDER", "mock")
 TRACEABILITY_FALLBACK_TO_MOCK = (

@@ -1,4 +1,5 @@
 from pathlib import Path
+from urllib.parse import urljoin
 
 import httpx
 from django.conf import settings
@@ -9,7 +10,8 @@ class FastAPIServiceError(Exception):
 
 
 def call_fastapi(file_path: str) -> dict:
-    detect_url = f"{settings.FASTAPI_URL}/detect/"
+    base_url = str(settings.FASTAPI_URL).rstrip("/") + "/"
+    detect_url = urljoin(base_url, "detect/")
     path = Path(file_path)
     with path.open("rb") as f:
         files = {"file": (path.name, f, "application/octet-stream")}

@@ -2,6 +2,11 @@
 
 SHEild AI is a hackathon-ready forensic deepfake detection platform using a microservices architecture.
 
+## Hackathon Documentation
+
+- Full project brief, implementation details, judging-point mapping, and demo script:
+	- `docs/HACKATHON_GUIDE.md`
+
 ## Architecture
 
 - Frontend: React + Vite + Tailwind + Framer Motion
