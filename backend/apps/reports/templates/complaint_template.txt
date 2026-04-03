@@ -1,0 +1,19 @@
+TO,
+The Commissioner of Police,
+Cyber Crime Cell
+
+SUBJECT: Complaint regarding deepfake / morphed content abuse (Case ID: {{ case_id }})
+
+Respected Sir/Madam,
+
+I, {{ victim_name }}, request registration of a cybercrime complaint for malicious synthetic media circulated on {{ platform }}.
+
+Verdict: {{ verdict }}
+Risk Level: {{ risk_level }}
+
+Artifacts:
+{{ artifacts }}
+
+Applicable legal sections: IT Act 66E, 67, 67A; IPC 509.
+
+Kindly take immediate action.

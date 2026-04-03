@@ -1,0 +1,45 @@
+services:
+  - type: web
+    name: sheild-ai-service
+    runtime: python
+    rootDir: ai-service
+    buildCommand: pip install -r requirements.txt
+    startCommand: uvicorn main:app --host 0.0.0.0 --port $PORT
+    healthCheckPath: /health
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.12.6
+
+  - type: web
+    name: sheild-backend
+    runtime: python
+    rootDir: backend
+    buildCommand: pip install -r requirements.txt && python manage.py migrate
+    startCommand: gunicorn sheild.wsgi:application --bind 0.0.0.0:$PORT
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.12.6
+      - key: DJANGO_DEBUG
+        value: false
+      - key: DJANGO_ALLOWED_HOSTS
+        value: .onrender.com
+      - key: CORS_ALLOWED_ORIGINS
+        value: https://your-netlify-site.netlify.app
+      - key: CSRF_TRUSTED_ORIGINS
+        value: https://your-netlify-site.netlify.app
+      - key: FASTAPI_URL
+        sync: false
+      - key: TRACEABILITY_PROVIDER
+        value: serpapi
+      - key: TRACEABILITY_FALLBACK_TO_MOCK
+        value: false
+      - key: SERPAPI_API_KEY
+        sync: false
+      - key: CLOUDINARY_CLOUD_NAME
+        sync: false
+      - key: CLOUDINARY_API_KEY
+        sync: false
+      - key: CLOUDINARY_API_SECRET
+        sync: false
+      - key: DJANGO_SECRET_KEY
+        sync: false
