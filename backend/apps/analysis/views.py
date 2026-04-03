@@ -9,7 +9,7 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from .serializers import AnalyzeUploadSerializer
-from .services import build_action_steps, call_fastapi, compute_risk
+from .services import FastAPIServiceError, build_action_steps, call_fastapi, compute_risk
 from .traceability import get_traceability
 
 CASES_STORE = Path(settings.MEDIA_ROOT) / "cases.json"
@@ -49,7 +49,17 @@ class AnalyzeView(APIView):
             for chunk in uploaded.chunks():
                 destination.write(chunk)
 
-        ai_result = call_fastapi(str(file_path))
+        try:
+            ai_result = call_fastapi(str(file_path))
+        except FastAPIServiceError as exc:
+            return Response(
+                {
+                    "detail": str(exc),
+                    "code": "ai_service_unavailable",
+                },
+                status=status.HTTP_502_BAD_GATEWAY,
+            )
+
         confidence = float(ai_result.get("confidence", 0.0))
         risk_level = compute_risk(confidence)
         action_steps = build_action_steps(risk_level)

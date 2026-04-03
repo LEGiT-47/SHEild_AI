@@ -4,14 +4,32 @@ import httpx
 from django.conf import settings
 
 
+class FastAPIServiceError(Exception):
+    pass
+
+
 def call_fastapi(file_path: str) -> dict:
     detect_url = f"{settings.FASTAPI_URL}/detect/"
     path = Path(file_path)
     with path.open("rb") as f:
         files = {"file": (path.name, f, "application/octet-stream")}
-        response = httpx.post(detect_url, files=files, timeout=20.0)
-    response.raise_for_status()
-    return response.json()
+        try:
+            response = httpx.post(detect_url, files=files, timeout=20.0)
+        except httpx.RequestError as exc:
+            raise FastAPIServiceError(f"Could not reach AI service at {detect_url}") from exc
+
+    try:
+        response.raise_for_status()
+    except httpx.HTTPStatusError as exc:
+        body_preview = (exc.response.text or "")[:200]
+        raise FastAPIServiceError(
+            f"AI service returned {exc.response.status_code}: {body_preview}"
+        ) from exc
+
+    try:
+        return response.json()
+    except ValueError as exc:
+        raise FastAPIServiceError("AI service returned invalid JSON") from exc
 
 
 def compute_risk(confidence: float) -> str:
